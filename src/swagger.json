@@ -1,0 +1,264 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Desafio 02 - Documentando com Swagger",
+        "description": "Curso NodeJS - Ignite Rockeseat",
+        "version": "1.0.0",
+        "contact": {
+            "email": "superdev@gmail.com"
+        }
+    },
+    "paths":{
+        "/users":{
+            "post": {
+                "tags": ["Users"],
+                "summary":"Create a new user",
+                "description":"Create a new user",
+                "requestBody": {
+                    "content":{
+                        "application/json":{
+                            "schema":{
+                                "type": "object",
+                                "properties":{
+                                    "name":{
+                                        "type": "string"
+                                    },
+                                    "email":{
+                                        "type": "string"
+                                    }
+                                },
+                                "example":{
+                                    "name": "Superdev",
+                                    "email": "superdev@gmail.com"
+                                }
+                            }
+                        }
+
+                    }
+                },
+                "responses": {
+                    "201":{
+                        "description": "Created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",                                        
+                                    "properties": {
+                                        "id": {"type": "string"},
+                                        "name": {"type": "string"},
+                                        "email": {"type": "string"},
+                                        "admin": { "type": "boolean"},
+                                        "created_at": {"type": "date"},
+                                        "updated_at": {"type": "date"}
+                                    },
+                                    "example": {
+                                        "id": "123456",
+                                        "name": "Ada Lovelace",
+                                        "email": "ada@gmail.com",
+                                        "admin": true,
+                                        "created_at": "21/06/22",
+                                        "updated_at": "21/06/22"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400":{
+                        "description": "This email is already taken.",
+                        "content":{
+                            "application/json":{
+                                "schema":{
+                                    "type": "object",
+                                    "example":{
+                                        "error": "This email is already taken."
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "get":{
+                "tags":["Users"],
+                "summary":"List all users",
+                "description":"Only admin users can list all users",
+                "parameters": [{
+                   "in": "header",
+                   "name": "user_id",
+                   "schema": {
+                        "type": "string",
+                        "example": "11111111111111111"
+                    },
+                    "required": true,
+                    "description": "Header Parameter"
+                }],
+                "responses": {
+                    "200":{
+                        "description": "Success",
+                        "content":{
+                            "application/json":{
+                                "schema":{
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties":{   
+                                            "id": {"type": "string"},
+                                            "name": {"type": "string"},
+                                            "email": {"type": "string"},
+                                            "admin": { "type": "boolean"},
+                                            "created_at": {"type": "date"},
+                                            "updated_at": {"type": "date"}
+                                        },
+                                        "example":[
+                                        {
+                                            "id": "12345",
+                                            "name": "Ada Lovelace",
+                                            "email": "ada@gmail.com",
+                                            "admin": true,
+                                            "created_at": "12/06/22",
+                                            "updated_at": "13/06/22"
+                                        },
+                                        {
+                                            "id": "12346",
+                                            "name": "Margaret Hamilton",
+                                            "email": "maggie@gmail.com",
+                                            "admin": false,
+                                            "created_at": "14/06/22",
+                                            "updated_at": "15/06/22"
+                                        }
+                                        ] 
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400":{
+                        "description": "This user does not exist or does not have permission",
+                        "content":{
+                            "application/json":{
+                                "schema":{
+                                    "type": "object",
+                                    "example":{
+                                        "error": "This user does not exist or does not have permission."
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{user_id}": {
+            "get": {
+                "tags": ["Users"],
+                "summary": "Return an specific user",
+                "description": "Return an specific user",
+                "parameters": [{
+                    "in": "path",
+                    "name": "user_id",
+                    "schema": {
+                        "type": "string"
+                    },
+                    "required": true
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                            "content": {
+                                "application/json": {
+                                    "schema": {
+                                        "type": "object",                                        
+                                        "properties": {
+                                            "id": {"type": "string"},
+                                            "name": {"type": "string"},
+                                            "email": {"type": "string"},
+                                            "admin": { "type": "boolean"},
+                                            "created_at": {"type": "date"},
+                                            "updated_at": {"type": "date"}
+                                        },
+                                        "example": {
+                                            "admin": true,
+                                            "id": "123456",
+                                            "name": "Ada Lovelace",
+                                            "email": "ada@gmail.com",
+                                            "created_at": "21/06/22",
+                                            "updated_at": "21/06/22"
+                                        }
+                                    }
+                                }
+                            }
+                    },
+                    "404": {
+                        "description": "User not found.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",                                      
+                                    "example": {
+                                        "error": "User not found."
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }    
+        },
+        "/users/{user_id}/admin": {
+            "patch": {
+                "tags": ["Users"],
+                "summary": "Turn an user to an admin",
+                "description": "Turn an user to an admin",
+                "parameters": [{
+                    "in": "path",
+                    "name": "user_id",
+                    "schema": {
+                        "type": "string"
+                    },
+                    "required": true
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Success",
+                            "content": {
+                                "application/json": {
+                                    "schema": {
+                                        "type": "object",                                        
+                                        "properties": {
+                                            "id": {"type": "string"},
+                                            "name": {"type": "string"},
+                                            "email": {"type": "string"},
+                                            "admin": { "type": "boolean"},
+                                            "created_at": {"type": "date"},
+                                            "updated_at": {"type": "date"}
+                                        },
+                                        "example": {
+                                            "admin": true,
+                                            "id": "123456",
+                                            "name": "Ada Lovelace",
+                                            "email": "ada@gmail.com",
+                                            "created_at": "21/06/22",
+                                            "updated_at": "21/06/22"
+                                        }
+                                    }
+                                }
+                            }
+                    },
+                    "404": {
+                        "description": "User not found.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",                                      
+                                    "example": {
+                                        "error": "User not found."
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }    
+        }      
+    }   
+}
